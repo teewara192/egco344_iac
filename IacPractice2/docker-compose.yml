@@ -1,0 +1,11 @@
+services:
+  simple-flask-app:
+    build: .
+    ports:
+      - "5050:5050"
+    environment:
+      - REDIS_HOST=redis-simflask-db
+  redis-simflask-db:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
