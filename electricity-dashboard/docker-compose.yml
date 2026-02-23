@@ -1,0 +1,32 @@
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+  mongo-seed:
+    image: mongo:latest
+    volumes:
+      - ./data:/data
+    depends_on:
+      - mongodb
+    command: >
+      sh -c "mongoimport --host mongodb --db electricity_db --collection usages --type json --file /data/electricity_usages_en.json --jsonArray && mongoimport --host mongodb --db electricity_db --collection users --type json --file /data/electricity_users_en.json --jsonArray"
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - mongodb
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+      
+volumes:
+  mongo_data:
